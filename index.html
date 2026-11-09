@@ -1,0 +1,655 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kitty Fraction Bakery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400..700&family=Nunito:wght@400;600;800&display=swap">
+<style>
+/* Layout: a bakery counter — striped awning sign on top, the order ticket in the middle, the cake stand beside it filling up as she serves */
+:root {
+  --bg: #FFF2F5;
+  --dot: #FBDDE5;
+  --panel: #FFFDFB;
+  --ink: #3B2A4A;
+  --soft: #6E5A7E;
+  --line: #F1D3DC;
+  --berry: #C93D64;
+  --berry-soft: #F6A5BC;
+  --butter: #FFD98A;
+  --lav: #CDBEF5;
+  --mint: #9EDFC8;
+  --choc: #8A5A44;
+  --good: #23855B;
+  --good-bg: #E3F6EC;
+  --bad: #C2384D;
+  --bad-bg: #FDE6EA;
+  --display: 'Fredoka', 'Trebuchet MS', Arial, sans-serif;
+  --body: 'Nunito', 'Trebuchet MS', Arial, sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+[hidden] { display: none !important; }
+img { max-width: 100%; }
+body {
+  background-color: var(--bg);
+  background-image: radial-gradient(var(--dot) 2.5px, transparent 3px);
+  background-size: 28px 28px;
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 17px;
+  line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 20px 48px;
+}
+.wrap { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:focus-visible { outline: 3px solid var(--berry); outline-offset: 3px; }
+
+/* ---------- shop sign ---------- */
+.sign { background: var(--panel); border-radius: 22px; overflow: hidden; box-shadow: 0 6px 0 var(--line); }
+.awning {
+  height: 34px;
+  background:
+    radial-gradient(circle at 20px 0, transparent 0, transparent 0) ,
+    repeating-linear-gradient(90deg, var(--berry-soft) 0 40px, var(--panel) 40px 80px);
+  position: relative;
+}
+.awning::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -14px; height: 14px;
+  background: radial-gradient(circle at 20px 0, var(--berry-soft) 13px, transparent 14px) 0 0 / 80px 14px repeat-x,
+              radial-gradient(circle at 60px 0, var(--panel) 13px, transparent 14px) 0 0 / 80px 14px repeat-x;
+}
+.sign-body { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 20px; padding: 26px 24px 18px; }
+.sign h1 { font-family: var(--display); font-weight: 700; font-size: clamp(26px, 5vw, 38px); line-height: 1.1; margin: 0; text-wrap: balance; }
+.sign h1 span { color: var(--berry); }
+.sign p { margin: 2px 0 0; color: var(--soft); font-size: 15px; }
+.chips { display: flex; gap: 10px; flex-wrap: wrap; }
+.chip { display: flex; align-items: center; gap: 8px; background: var(--bg); border: 2px solid var(--line); border-radius: 999px; padding: 6px 14px; font-family: var(--display); font-weight: 600; font-size: 18px; font-variant-numeric: tabular-nums; }
+.chip .coin { width: 20px; height: 20px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #FFF1C2, var(--butter) 55%, #E0A93A); box-shadow: inset 0 -2px 0 #C98E22; }
+.chip small { font-family: var(--body); font-weight: 600; font-size: 13px; color: var(--soft); }
+
+/* ---------- menu ---------- */
+.menu { display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px; }
+.levels { display: flex; flex-direction: column; gap: 14px; }
+.levels h2, .rules h2 { font-family: var(--display); font-size: 22px; margin: 0 0 4px; }
+.level {
+  display: grid; grid-template-columns: 64px 1fr auto; align-items: center; gap: 16px;
+  text-align: left; background: var(--panel); border: 2px solid var(--line); border-radius: 20px; padding: 16px 18px;
+  box-shadow: 0 4px 0 var(--line); transition: transform .15s, box-shadow .15s;
+}
+.level:hover { transform: translateY(-2px); box-shadow: 0 6px 0 var(--berry-soft); }
+.level:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--line); }
+.level .ico { width: 64px; height: 64px; border-radius: 18px; display: grid; place-items: center; font-size: 34px; }
+.level:nth-child(2) .ico { background: var(--butter); }
+.level:nth-child(3) .ico { background: var(--lav); }
+.level:nth-child(4) .ico { background: var(--mint); }
+.level b { font-family: var(--display); font-size: 20px; font-weight: 600; display: block; }
+.level span.desc { color: var(--soft); font-size: 15px; display: block; }
+.stars { font-size: 20px; letter-spacing: 2px; white-space: nowrap; color: var(--line); }
+.stars .on { color: #E9A23B; }
+.rules { background: var(--panel); border-radius: 20px; padding: 20px; border: 2px dashed var(--berry-soft); display: flex; flex-direction: column; gap: 10px; align-self: start; }
+.rules ol { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 8px; }
+.rules li::marker { font-family: var(--display); font-weight: 700; color: var(--berry); }
+.rules .ex { color: var(--soft); font-size: 15px; }
+
+/* ---------- play ---------- */
+.counter { display: grid; grid-template-columns: 1fr 280px; gap: 20px; align-items: start; }
+.ticket { background: var(--panel); border-radius: 24px; padding: 22px; box-shadow: 0 6px 0 var(--line); display: flex; flex-direction: column; gap: 18px; position: relative; overflow: hidden; }
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.lvl-name { font-family: var(--display); font-weight: 600; font-size: 18px; color: var(--berry); }
+.dots { display: flex; gap: 6px; }
+.dots i { width: 14px; height: 14px; border-radius: 50%; background: var(--line); display: block; }
+.dots i.done { background: var(--good); }
+.dots i.miss { background: var(--berry-soft); }
+.dots i.now { background: var(--butter); box-shadow: 0 0 0 3px var(--panel), 0 0 0 5px var(--butter); }
+.timer { flex: 1; min-width: 140px; max-width: 320px; height: 14px; background: var(--line); border-radius: 999px; overflow: hidden; }
+.timer div { height: 100%; width: 100%; background: linear-gradient(90deg, var(--mint), var(--butter)); transition: width .25s linear; }
+.timer-txt { font-family: var(--display); font-weight: 600; font-variant-numeric: tabular-nums; min-width: 48px; text-align: right; }
+.quit { background: none; border: none; color: var(--soft); font-size: 15px; text-decoration: underline; padding: 4px; }
+
+.customer { display: flex; align-items: flex-end; gap: 14px; }
+.avatar { flex: 0 0 auto; width: 76px; height: 76px; border-radius: 50%; background: var(--bg); border: 3px solid var(--line); display: grid; place-items: center; font-size: 44px; animation: bob 2.4s ease-in-out infinite; }
+.bubble { position: relative; background: var(--bg); border-radius: 20px 20px 20px 6px; padding: 12px 16px; min-width: 0; }
+.bubble .who { font-family: var(--display); font-weight: 600; color: var(--berry); font-size: 15px; }
+.bubble p { margin: 0; }
+
+.eq { font-family: var(--display); font-weight: 500; font-size: clamp(40px, 9vw, 64px); display: flex; align-items: center; justify-content: center; gap: .35em; flex-wrap: wrap; padding: 6px 0; }
+.eq .q { color: var(--berry); font-weight: 700; }
+.fr { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; line-height: 1.02; }
+.fr > span:first-child { border-bottom: .07em solid currentColor; padding: 0 .14em .04em; }
+.fr > span:last-child { padding-top: .04em; }
+.mixed { display: inline-flex; align-items: center; gap: .12em; }
+
+.prompt { text-align: center; font-weight: 800; font-size: 18px; margin: 0; }
+.prompt small { display: block; font-weight: 600; color: var(--soft); font-size: 14px; }
+.convert { display: flex; justify-content: center; gap: 12px 28px; flex-wrap: wrap; background: var(--bg); border-radius: 16px; padding: 12px; font-family: var(--display); font-size: 26px; }
+.convert div { display: flex; align-items: center; gap: 10px; }
+.convert em { font-style: normal; font-family: var(--body); font-size: 14px; font-weight: 800; color: var(--soft); background: var(--panel); border-radius: 999px; padding: 2px 10px; }
+
+.opts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.opt {
+  font-family: var(--display); font-size: 34px; font-weight: 500; min-height: 92px;
+  background: var(--panel); border: 3px solid var(--line); border-radius: 20px;
+  box-shadow: 0 5px 0 var(--line); display: flex; align-items: center; justify-content: center; gap: 12px; padding: 8px;
+  transition: transform .12s, box-shadow .12s, background .2s, border-color .2s;
+}
+.opt .k { font-family: var(--body); font-size: 13px; font-weight: 800; color: var(--soft); align-self: flex-start; }
+.opt:hover:not(:disabled) { border-color: var(--berry-soft); transform: translateY(-2px); box-shadow: 0 7px 0 var(--berry-soft); }
+.opt:disabled { cursor: default; }
+.opt.right { background: var(--good-bg); border-color: var(--good); box-shadow: 0 5px 0 var(--good); color: var(--good); }
+.opt.wrong { background: var(--bad-bg); border-color: var(--bad); box-shadow: 0 5px 0 var(--bad); color: var(--bad); animation: shake .35s; }
+.opt.dim { opacity: .45; }
+
+.feedback { border-radius: 18px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+.feedback.ok { background: var(--good-bg); color: var(--good); }
+.feedback.no { background: var(--bad-bg); color: var(--ink); }
+.feedback .head { font-family: var(--display); font-weight: 600; font-size: 20px; }
+.feedback.no .head { color: var(--bad); }
+.ladder { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-family: var(--display); }
+.rung { background: var(--panel); border: 2px solid var(--line); border-radius: 12px; padding: 4px 12px; font-size: 22px; }
+.rung small { font-family: var(--body); font-size: 13px; font-weight: 800; color: var(--soft); margin-left: 4px; }
+.rung.yes { background: var(--butter); border-color: #E3B44F; }
+.arrow { color: var(--soft); }
+.work { font-family: var(--display); font-size: 24px; display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+.next { align-self: flex-end; font-family: var(--display); font-weight: 600; font-size: 20px; background: var(--berry); color: #FFF7FA; border: none; border-radius: 999px; padding: 12px 26px; box-shadow: 0 4px 0 #8E2545; }
+.next:active { transform: translateY(2px); box-shadow: 0 2px 0 #8E2545; }
+
+/* ---------- cake stand ---------- */
+.stand { background: var(--panel); border-radius: 24px; padding: 18px; box-shadow: 0 6px 0 var(--line); display: flex; flex-direction: column; align-items: center; gap: 10px; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 12px); }
+.stand h3 { font-family: var(--display); margin: 0; font-size: 18px; }
+.stand p { margin: 0; color: var(--soft); font-size: 14px; text-align: center; }
+.cake-area { width: 220px; height: 250px; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; }
+.toppings { display: flex; flex-wrap: wrap-reverse; justify-content: center; gap: 0 2px; width: 150px; font-size: 24px; line-height: 1.1; min-height: 28px; }
+.toppings span { animation: drop .45s cubic-bezier(.3,1.6,.5,1); }
+.layers { display: flex; flex-direction: column-reverse; align-items: center; }
+.layer { height: 38px; border-radius: 14px; position: relative; animation: pop .4s cubic-bezier(.3,1.6,.5,1); box-shadow: inset 0 -6px 0 rgba(59,42,74,.12); }
+.layer::before { content: ""; position: absolute; left: 6px; right: 6px; top: 0; height: 10px; border-radius: 0 0 12px 12px; background: repeating-radial-gradient(circle at 10px 0, #FFFDFB 0 6px, transparent 6px 20px); opacity: .9; }
+.plate { width: 210px; height: 16px; border-radius: 0 0 50% 50% / 0 0 100% 100%; background: var(--lav); }
+.plate-leg { width: 40px; height: 22px; background: var(--lav); clip-path: polygon(30% 0, 70% 0, 100% 100%, 0 100%); }
+.served { font-family: var(--display); font-weight: 600; font-size: 16px; color: var(--berry); font-variant-numeric: tabular-nums; }
+
+/* ---------- result ---------- */
+.result { background: var(--panel); border-radius: 26px; padding: 28px 22px; box-shadow: 0 6px 0 var(--line); display: grid; grid-template-columns: auto 1fr; gap: 28px; align-items: center; }
+.result h2 { font-family: var(--display); font-size: clamp(28px, 5vw, 40px); margin: 0; line-height: 1.1; text-wrap: balance; }
+.result .big-stars { font-size: 44px; letter-spacing: 6px; color: var(--line); }
+.result .big-stars .on { color: #E9A23B; display: inline-block; animation: pop .5s cubic-bezier(.3,1.6,.5,1) both; }
+.result .big-stars .on:nth-child(2) { animation-delay: .15s; }
+.result .big-stars .on:nth-child(3) { animation-delay: .3s; }
+.result p { margin: 0; color: var(--soft); max-width: 46ch; }
+.stats { display: flex; gap: 10px; flex-wrap: wrap; }
+.stat { background: var(--bg); border-radius: 14px; padding: 8px 14px; }
+.stat b { font-family: var(--display); font-size: 24px; display: block; font-variant-numeric: tabular-nums; }
+.stat span { font-size: 13px; color: var(--soft); font-weight: 600; }
+.actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.ghost { font-family: var(--display); font-weight: 600; font-size: 18px; background: var(--panel); color: var(--berry); border: 2px solid var(--berry-soft); border-radius: 999px; padding: 10px 22px; }
+
+/* ---------- sprinkles & coins ---------- */
+.sprinkle { position: absolute; top: -10px; width: 6px; height: 16px; border-radius: 4px; pointer-events: none; animation: fall 1.1s ease-in forwards; }
+.plus { position: absolute; right: 22px; top: 60px; font-family: var(--display); font-weight: 700; font-size: 22px; color: #B8821E; pointer-events: none; animation: rise 1s ease-out forwards; }
+
+@keyframes bob { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-4px) } }
+@keyframes shake { 0%,100% { transform: translateX(0) } 25% { transform: translateX(-6px) } 75% { transform: translateX(6px) } }
+@keyframes pop { from { transform: scale(.4); opacity: 0 } to { transform: scale(1); opacity: 1 } }
+@keyframes drop { from { transform: translateY(-30px); opacity: 0 } to { transform: none; opacity: 1 } }
+@keyframes fall { to { transform: translateY(520px) rotate(300deg); opacity: 0 } }
+@keyframes rise { from { transform: translateY(0); opacity: 1 } to { transform: translateY(-40px); opacity: 0 } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+@media (max-width: 780px) {
+  .menu, .counter { grid-template-columns: 1fr; }
+  .stand { position: static; flex-direction: row; flex-wrap: wrap; justify-content: center; }
+  .result { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+  .result .actions, .result .stats { justify-content: center; }
+}
+@media (max-width: 440px) {
+  .opt { font-size: 28px; min-height: 80px; }
+  .level { grid-template-columns: 52px 1fr; }
+  .level .ico { width: 52px; height: 52px; font-size: 28px; }
+  .level .stars { grid-column: 2; }
+  .convert { font-size: 22px; }
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="sign">
+    <div class="awning" aria-hidden="true"></div>
+    <div class="sign-body">
+      <div>
+        <h1>Kitty <span>Fraction</span> Bakery</h1>
+        <p>Every order needs the right pan. The right pan is the LCD.</p>
+      </div>
+      <div class="chips">
+        <div class="chip" title="Coins earned"><i class="coin" aria-hidden="true"></i><span id="coins">0</span><small>coins</small></div>
+        <div class="chip" title="Correct answers in a row"><span aria-hidden="true">🔥</span><span id="streak">0</span><small>in a row</small></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MENU -->
+  <section id="menu" class="menu">
+    <div class="levels">
+      <h2>Choose your shift</h2>
+      <button class="level" data-level="1">
+        <span class="ico" aria-hidden="true">🍰</span>
+        <span><b>1 · Pick the pan</b><span class="desc">8 orders. Find the LCD of the two slices.</span></span>
+        <span class="stars" id="stars-1"></span>
+      </button>
+      <button class="level" data-level="2">
+        <span class="ico" aria-hidden="true">🥣</span>
+        <span><b>2 · Mix the batter</b><span class="desc">8 orders. Pick the pan, then work out the whole order.</span></span>
+        <span class="stars" id="stars-2"></span>
+      </button>
+      <button class="level" data-level="3">
+        <span class="ico" aria-hidden="true">⏱️</span>
+        <span><b>3 · Rush hour</b><span class="desc">60 seconds. Serve as many orders as you can. Estimate!</span></span>
+        <span class="stars" id="stars-3"></span>
+      </button>
+    </div>
+    <aside class="rules" aria-label="How to find the pan size">
+      <h2>How to find the pan</h2>
+      <ol>
+        <li><b>One goes into the other?</b> Take the bigger one.<div class="ex">4 and 8 → 8</div></li>
+        <li><b>No common factor?</b> Multiply them.<div class="ex">3 and 5 → 15</div></li>
+        <li><b>They share a factor?</b> Count by the bigger one until the smaller fits.<div class="ex">6 and 8 → 8, 16, 24 → 24</div></li>
+      </ol>
+    </aside>
+  </section>
+
+  <!-- PLAY -->
+  <section id="play" class="counter" hidden>
+    <div class="ticket" id="ticket">
+      <div class="topbar">
+        <span class="lvl-name" id="lvl-name"></span>
+        <div class="dots" id="dots" aria-label="Orders"></div>
+        <div class="timer" id="timer-wrap" hidden><div id="timer-bar"></div></div>
+        <span class="timer-txt" id="timer-txt" hidden></span>
+        <button class="quit" id="quit">Close the shop</button>
+      </div>
+      <div class="customer">
+        <div class="avatar" id="avatar" aria-hidden="true">🐱</div>
+        <div class="bubble"><div class="who" id="who">Mochi</div><p id="says">Hi! Could I get this, please?</p></div>
+      </div>
+      <div class="eq" id="eq" aria-live="polite"></div>
+      <div class="convert" id="convert" hidden></div>
+      <p class="prompt" id="prompt"></p>
+      <div class="opts" id="opts"></div>
+      <div class="feedback" id="feedback" hidden aria-live="polite"></div>
+    </div>
+    <aside class="stand" aria-label="Your cake">
+      <h3>Today’s cake</h3>
+      <div class="cake-area">
+        <div class="toppings" id="toppings"></div>
+        <div class="layers" id="layers"></div>
+        <div class="plate"></div>
+        <div class="plate-leg"></div>
+      </div>
+      <div class="served" id="served">0 orders served</div>
+      <p>Every correct answer adds a layer or a topping.</p>
+    </aside>
+  </section>
+
+  <!-- RESULT -->
+  <section id="result" class="result" hidden>
+    <div class="cake-area" id="final-cake"></div>
+    <div style="display:flex;flex-direction:column;gap:14px;min-width:0">
+      <div class="big-stars" id="final-stars"></div>
+      <h2 id="final-title">Shift complete!</h2>
+      <p id="final-msg"></p>
+      <div class="stats" id="final-stats"></div>
+      <div class="actions">
+        <button class="next" id="again">Play this shift again</button>
+        <button class="ghost" id="tomenu">Back to the bakery</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+(function () {
+  const $ = (s) => document.querySelector(s);
+  const gcd = (a, b) => (b ? gcd(b, a % b) : a);
+  const lcm = (a, b) => (a / gcd(a, b)) * b;
+  const rnd = (n) => Math.floor(Math.random() * n);
+  const pick = (arr) => arr[rnd(arr.length)];
+  const shuffle = (arr) => { for (let i = arr.length - 1; i > 0; i--) { const j = rnd(i + 1); [arr[i], arr[j]] = [arr[j], arr[i]]; } return arr; };
+  const reduce = (n, d) => { const g = gcd(n, d); return [n / g, d / g]; };
+
+  const DENS = [2, 3, 4, 5, 6, 8, 9, 10, 12, 15, 18];
+  const CUSTOMERS = [
+    ['🐱', 'Mochi'], ['🐰', 'Bun'], ['🐻', 'Honey'], ['🦊', 'Ginger'], ['🐼', 'Bao'],
+    ['🐨', 'Koko'], ['🐹', 'Pip'], ['🐸', 'Lily'], ['🦄', 'Star'], ['🐧', 'Tofu'], ['🐶', 'Biscuit'], ['🐯', 'Mango']
+  ];
+  const GREETINGS = ['Hi! Could I get this, please?', 'Hello! One of these for me!', 'Ooh, I’d love this one, please!', 'It’s my birthday! I’d like this:', 'Can you bake this for my friend?', 'One order, please! I’m in a hurry!'];
+  const YAY = ['Yum! Perfect pan!', 'Purrfect!', 'The customer is so happy!', 'Sweet! Just right.', 'Great baking!', 'Wow, so fast!'];
+  const LAYER_COLORS = ['--butter', '--berry-soft', '--lav', '--mint', '--butter'];
+  const TOPPINGS = ['🍓', '🍒', '🌸', '⭐', '🫐', '🍫', '🍓', '🎀', '🍒', '✨', '🌸', '🍓'];
+
+  const LEVELS = {
+    1: { name: 'Shift 1 · Pick the pan', orders: 8, steps: ['lcd'] },
+    2: { name: 'Shift 2 · Mix the batter', orders: 8, steps: ['lcd', 'answer'] },
+    3: { name: 'Shift 3 · Rush hour', time: 60, steps: ['answer'] }
+  };
+
+  // ---------- saved progress (this browser only) ----------
+  const KEY = 'kitty-fraction-bakery-v1';
+  let save = { coins: 0, stars: { 1: 0, 2: 0, 3: 0 } };
+  try { const raw = localStorage.getItem(KEY); if (raw) save = Object.assign(save, JSON.parse(raw)); } catch (e) {}
+  const persist = () => { try { localStorage.setItem(KEY, JSON.stringify(save)); } catch (e) {} };
+
+  // ---------- fractions as HTML ----------
+  const stack = (n, d) => `<span class="fr"><span>${n}</span><span>${d}</span></span>`;
+  function fracHTML(n, d) {
+    [n, d] = reduce(n, d);
+    if (d === 1) return `<span>${n}</span>`;
+    if (n > d) { const w = Math.floor(n / d), r = n % d; return `<span class="mixed"><span>${w}</span>${stack(r, d)}</span>`; }
+    return stack(n, d);
+  }
+  const fracText = (n, d) => { [n, d] = reduce(n, d); if (d === 1) return `${n}`; if (n > d) return `${Math.floor(n / d)} and ${n % d}/${d}`; return `${n}/${d}`; };
+
+  // ---------- problem generator ----------
+  function makePair() {
+    for (let tries = 0; tries < 500; tries++) {
+      const b = pick(DENS), d = pick(DENS);
+      if (b === d) continue;
+      const L = lcm(b, d);
+      if (L > 36) continue;
+      const kind = L === Math.max(b, d) ? 'divides' : L === b * d ? 'coprime' : 'ladder';
+      if (kind !== 'ladder' && Math.random() < 0.45) continue; // the ladder case gets the most practice
+      return [b, d, L];
+    }
+    return [6, 8, 24];
+  }
+  function properNum(b) { const o = []; for (let a = 1; a < b; a++) if (gcd(a, b) === 1) o.push(a); return pick(o); }
+  function makeProblem() {
+    for (;;) {
+      let [b, d, L] = makePair();
+      let a = properNum(b), c = properNum(d);
+      const op = Math.random() < 0.5 ? '+' : '−';
+      if (op === '−') {
+        if (a * d === c * b) continue;
+        if (a * d < c * b) { [a, b, c, d] = [c, d, a, b]; }
+      }
+      const ka = L / b, kc = L / d;
+      const num = op === '+' ? a * ka + c * kc : a * ka - c * kc;
+      return { a, b, c, d, op, L, ka, kc, num };
+    }
+  }
+  function lcdOptions(p) {
+    const big = Math.max(p.b, p.d);
+    const cands = [p.b * p.d, big, p.L * 2, p.L + big, p.b + p.d, p.L - big, p.L * 3];
+    const out = [];
+    for (const x of cands) if (x > 1 && x !== p.L && !out.includes(x) && x % 1 === 0) out.push(x);
+    const chosen = out.slice(0, 3);
+    return shuffle([{ v: p.L, ok: true }, ...chosen.map((v) => ({ v, ok: false }))]);
+  }
+  function answerOptions(p) {
+    const [cn, cd] = reduce(p.num, p.L);
+    const s = p.op === '+' ? 1 : -1;
+    const raw = [];
+    const tn = p.a + s * p.c, td = p.b + s * p.d;
+    if (tn > 0 && td > 0) raw.push([tn, td]);               // tops and bottoms
+    if (p.b * p.d !== p.L) raw.push([p.num, p.b * p.d]);    // forgot to change the top
+    raw.push([p.num + 1, p.L]);
+    if (p.num - 1 > 0) raw.push([p.num - 1, p.L]);
+    const other = p.op === '+' ? Math.abs(p.a * p.ka - p.c * p.kc) : p.a * p.ka + p.c * p.kc;
+    if (other > 0) raw.push([other, p.L]);                  // wrong operation
+    if (tn > 0) raw.push([tn, p.L]);                        // tops not converted
+    const seen = [[cn, cd]];
+    const out = [];
+    for (const [n0, d0] of shuffle(raw)) {
+      const [n, d] = reduce(n0, d0);
+      if (seen.some(([sn, sd]) => sn * d === n * sd)) continue;
+      seen.push([n, d]); out.push([n, d]);
+      if (out.length === 3) break;
+    }
+    let k = 1;
+    while (out.length < 3) { const n = cn + k, d = cd; k++; if (!seen.some(([sn, sd]) => sn * d === n * sd)) { seen.push([n, d]); out.push([n, d]); } }
+    return shuffle([{ n: cn, d: cd, ok: true }, ...out.map(([n, d]) => ({ n, d, ok: false }))]);
+  }
+
+  // ---------- hints ----------
+  function ladderHTML(p) {
+    const big = Math.max(p.b, p.d), small = Math.min(p.b, p.d);
+    let html = '', m = big, steps = 0;
+    for (;;) {
+      steps++;
+      const ok = m % small === 0;
+      html += `${steps > 1 ? '<span class="arrow" aria-hidden="true">→</span>' : ''}<span class="rung${ok ? ' yes' : ''}">${m}<small>${ok ? `÷ ${small}, yes` : 'no'}</small></span>`;
+      if (ok) break;
+      m += big;
+    }
+    let note;
+    if (p.L === big) note = `${small} goes into ${big}, so the pan is just ${big}.`;
+    else if (p.L === p.b * p.d) note = `${p.b} and ${p.d} share no factor, so multiply: ${p.b} × ${p.d} = ${p.L}.`;
+    else note = `Count by ${big}s until ${small} fits: the pan is ${p.L}.`;
+    return `<div>${note}</div><div class="ladder">${html}</div>`;
+  }
+  function convertHTML(p) {
+    return `<div>${stack(p.a, p.b)} = ${stack(p.a * p.ka, p.L)} <em>${p.L} ÷ ${p.b} = ${p.ka}</em></div>` +
+           `<div>${stack(p.c, p.d)} = ${stack(p.c * p.kc, p.L)} <em>${p.L} ÷ ${p.d} = ${p.kc}</em></div>`;
+  }
+  function workHTML(p) {
+    const r = reduce(p.num, p.L);
+    const simplified = r[1] !== p.L;
+    return `<div class="work">${stack(p.a * p.ka, p.L)} ${p.op} ${stack(p.c * p.kc, p.L)} = ${stack(p.num, p.L)}${simplified || p.num > p.L ? ` = ${fracHTML(p.num, p.L)}` : ''}</div>`;
+  }
+
+  // ---------- game state ----------
+  let st = null, timerId = null;
+
+  function updateChips() { $('#coins').textContent = save.coins; $('#streak').textContent = st ? st.streak : 0; }
+  function starsHTML(n) { let h = ''; for (let i = 1; i <= 3; i++) h += `<span class="${i <= n ? 'on' : ''}">★</span>`; return h; }
+  function renderMenuStars() { for (const k of [1, 2, 3]) { const el = $('#stars-' + k); el.innerHTML = starsHTML(save.stars[k] || 0); el.setAttribute('aria-label', `${save.stars[k] || 0} of 3 stars`); } }
+
+  function show(id) { for (const s of ['menu', 'play', 'result']) $('#' + s).hidden = s !== id; window.scrollTo({ top: 0 }); }
+
+  function startLevel(n) {
+    st = { level: n, cfg: LEVELS[n], i: 0, results: [], mistakes: 0, correct: 0, streak: 0, best: 0, phase: null, p: null, locked: false, cake: 0, coinsEarned: 0, time: LEVELS[n].time || 0, firstTry: true };
+    $('#layers').innerHTML = ''; $('#toppings').innerHTML = '';
+    $('#lvl-name').textContent = st.cfg.name;
+    const timed = !!st.cfg.time;
+    $('#dots').hidden = timed; $('#timer-wrap').hidden = !timed; $('#timer-txt').hidden = !timed;
+    clearInterval(timerId);
+    if (timed) {
+      const end = Date.now() + st.time * 1000;
+      const tick = () => {
+        const left = Math.max(0, (end - Date.now()) / 1000);
+        $('#timer-bar').style.width = (left / st.cfg.time) * 100 + '%';
+        $('#timer-txt').textContent = Math.ceil(left) + 's';
+        if (left <= 0) { clearInterval(timerId); finish(); }
+      };
+      tick(); timerId = setInterval(tick, 200);
+    }
+    updateChips(); updateServed();
+    show('play');
+    nextOrder();
+  }
+
+  function renderDots() {
+    if (st.cfg.time) return;
+    let h = '';
+    for (let k = 0; k < st.cfg.orders; k++) {
+      const r = st.results[k];
+      h += `<i class="${r === true ? 'done' : r === false ? 'miss' : k === st.i ? 'now' : ''}"></i>`;
+    }
+    $('#dots').innerHTML = h;
+  }
+
+  function nextOrder() {
+    if (!st.cfg.time && st.i >= st.cfg.orders) return finish();
+    st.p = makeProblem();
+    st.phase = st.cfg.steps[0];
+    st.firstTry = true;
+    const [emoji, name] = pick(CUSTOMERS);
+    $('#avatar').textContent = emoji; $('#who').textContent = name; $('#says').textContent = pick(GREETINGS);
+    const p = st.p;
+    $('#eq').innerHTML = `${stack(p.a, p.b)}<span>${p.op}</span>${stack(p.c, p.d)}<span>=</span><span class="q">?</span>`;
+    $('#eq').setAttribute('aria-label', `${p.a}/${p.b} ${p.op === '+' ? 'plus' : 'minus'} ${p.c}/${p.d}`);
+    renderDots();
+    renderPhase();
+  }
+
+  function renderPhase() {
+    const p = st.p;
+    st.locked = false;
+    $('#feedback').hidden = true;
+    $('#convert').hidden = !(st.level === 2 && st.phase === 'answer');
+    if (!$('#convert').hidden) $('#convert').innerHTML = convertHTML(p);
+    let opts;
+    if (st.phase === 'lcd') {
+      $('#prompt').innerHTML = `Which pan fits both slices?<small>Find the LCD of ${p.b} and ${p.d}</small>`;
+      opts = lcdOptions(p).map((o) => ({ html: `<span>${o.v}</span>`, ok: o.ok, label: `${o.v}` }));
+    } else {
+      $('#prompt').innerHTML = st.level === 3
+        ? `What does the order come to?<small>Estimate first: is it more or less than ½?</small>`
+        : `Now mix it: what does the order come to?<small>The pan is ${p.L}. Add or subtract the tops.</small>`;
+      opts = answerOptions(p).map((o) => ({ html: fracHTML(o.n, o.d), ok: o.ok, label: fracText(o.n, o.d) }));
+    }
+    const box = $('#opts');
+    box.innerHTML = '';
+    opts.forEach((o, idx) => {
+      const b = document.createElement('button');
+      b.className = 'opt'; b.type = 'button';
+      b.innerHTML = `<span class="k" aria-hidden="true">${idx + 1}</span>${o.html}`;
+      b.setAttribute('aria-label', `Option ${idx + 1}: ${o.label}`);
+      b.dataset.ok = o.ok ? '1' : '0';
+      b.addEventListener('click', () => choose(b));
+      box.appendChild(b);
+    });
+  }
+
+  function choose(btn) {
+    if (st.locked) return;
+    st.locked = true;
+    const ok = btn.dataset.ok === '1';
+    const all = [...document.querySelectorAll('.opt')];
+    all.forEach((b) => { b.disabled = true; if (b.dataset.ok === '1') b.classList.add('right'); else if (b !== btn) b.classList.add('dim'); });
+    const fb = $('#feedback');
+    const lastStep = st.phase === st.cfg.steps[st.cfg.steps.length - 1];
+
+    if (ok) {
+      st.streak++; st.best = Math.max(st.best, st.streak);
+      const gain = 10 + (st.streak >= 3 ? 5 : 0);
+      save.coins += gain; st.coinsEarned += gain; persist();
+      floatCoins(gain); sprinkles();
+      if (lastStep) { st.correct++; addCake(); }
+      if (st.level === 2 && st.phase === 'lcd') {
+        fb.className = 'feedback ok';
+        fb.innerHTML = `<div class="head">Right pan! ${st.p.L} it is.</div><div>Now let’s turn both slices into ${st.p.L}ths.</div>`;
+        fb.hidden = false;
+        updateChips();
+        setTimeout(() => { st.phase = 'answer'; renderPhase(); }, 1100);
+        return;
+      }
+      fb.className = 'feedback ok';
+      fb.innerHTML = `<div class="head">${pick(YAY)}${st.streak >= 3 ? ` 🔥 ${st.streak} in a row, +5 bonus!` : ''}</div>`;
+    } else {
+      btn.classList.add('wrong');
+      st.streak = 0; st.mistakes++; st.firstTry = false;
+      fb.className = 'feedback no';
+      if (st.phase === 'lcd') fb.innerHTML = `<div class="head">Oops, that pan doesn’t fit.</div>${ladderHTML(st.p)}`;
+      else fb.innerHTML = `<div class="head">Not quite. Here’s the recipe:</div><div>Pan: ${st.p.L}</div><div class="work">${convertHTML(st.p).replace(/<\/?div>/g, ' ')}</div>${workHTML(st.p)}`;
+    }
+    updateChips();
+    const orderDone = ok ? lastStep : true;
+    if (orderDone && !st.cfg.time) { st.results[st.i] = ok && st.firstTry; st.i++; renderDots(); }
+    if (orderDone && st.cfg.time) st.i++;
+    fb.hidden = false;
+    if (st.cfg.time) {
+      setTimeout(() => { if (st && !$('#play').hidden) nextOrder(); }, ok ? 650 : 2600);
+    } else {
+      const nb = document.createElement('button');
+      nb.className = 'next'; nb.type = 'button'; nb.id = 'next-btn';
+      nb.textContent = st.i >= st.cfg.orders ? 'See my cake' : 'Next customer';
+      nb.addEventListener('click', nextOrder);
+      fb.appendChild(nb);
+      nb.focus({ preventScroll: true });
+    }
+  }
+
+  function updateServed() { $('#served').textContent = `${st ? st.correct : 0} order${st && st.correct === 1 ? '' : 's'} served`; }
+  function addCake() {
+    st.cake++;
+    if (st.cake <= 5) {
+      const l = document.createElement('div');
+      l.className = 'layer';
+      const w = 190 - (st.cake - 1) * 22;
+      l.style.width = w + 'px';
+      l.style.background = `var(${LAYER_COLORS[(st.cake - 1) % LAYER_COLORS.length]})`;
+      $('#layers').appendChild(l);
+    } else if (st.cake - 5 <= TOPPINGS.length) {
+      const t = document.createElement('span');
+      t.textContent = TOPPINGS[st.cake - 6];
+      $('#toppings').appendChild(t);
+    }
+    updateServed();
+  }
+  function floatCoins(n) {
+    const el = document.createElement('div');
+    el.className = 'plus'; el.textContent = `+${n} coins`;
+    $('#ticket').appendChild(el);
+    setTimeout(() => el.remove(), 1000);
+  }
+  function sprinkles() {
+    const cols = ['--berry-soft', '--butter', '--lav', '--mint', '--berry'];
+    const t = $('#ticket');
+    for (let k = 0; k < 18; k++) {
+      const s = document.createElement('span');
+      s.className = 'sprinkle';
+      s.style.left = rnd(100) + '%';
+      s.style.background = `var(${pick(cols)})`;
+      s.style.animationDelay = (Math.random() * 0.25) + 's';
+      s.style.transform = `rotate(${rnd(180)}deg)`;
+      t.appendChild(s);
+      setTimeout(() => s.remove(), 1500);
+    }
+  }
+
+  function finish() {
+    clearInterval(timerId);
+    let stars;
+    if (st.cfg.time) stars = st.correct >= 10 ? 3 : st.correct >= 6 ? 2 : 1;
+    else stars = st.mistakes <= 1 ? 3 : st.mistakes <= 3 ? 2 : 1;
+    if (stars > (save.stars[st.level] || 0)) save.stars[st.level] = stars;
+    persist();
+    $('#final-stars').innerHTML = starsHTML(stars);
+    $('#final-stars').setAttribute('aria-label', `${stars} of 3 stars`);
+    const titles = { 3: 'Master baker!', 2: 'Lovely cake!', 1: 'Shift complete!' };
+    $('#final-title').textContent = titles[stars];
+    let msg;
+    if (st.cfg.time) msg = stars === 3 ? 'That was a real rush, and you kept up. Every customer went home happy.' : `You served ${st.correct} orders in a minute. Try again and beat it: 6 for two stars, 10 for three.`;
+    else msg = stars === 3 ? 'Almost no mistakes. You find the pan like a pro.' : 'Good shift! Play it again to bake a cake with fewer mistakes and earn more stars.';
+    $('#final-msg').textContent = msg;
+    const stats = [[st.correct, 'orders served'], [st.mistakes, st.mistakes === 1 ? 'mistake' : 'mistakes'], [st.best, 'best streak'], [st.coinsEarned, 'coins earned']];
+    $('#final-stats').innerHTML = stats.map(([v, l]) => `<div class="stat"><b>${v}</b><span>${l}</span></div>`).join('');
+    const cake = $('#final-cake');
+    cake.innerHTML = `<div class="toppings">${$('#toppings').innerHTML}</div><div class="layers">${$('#layers').innerHTML}</div><div class="plate"></div><div class="plate-leg"></div>`;
+    show('result');
+    renderMenuStars(); updateChips();
+  }
+
+  // ---------- wiring ----------
+  document.querySelectorAll('.level').forEach((b) => b.addEventListener('click', () => startLevel(+b.dataset.level)));
+  $('#quit').addEventListener('click', () => { clearInterval(timerId); st = null; updateChips(); renderMenuStars(); show('menu'); });
+  $('#again').addEventListener('click', () => startLevel(st.level));
+  $('#tomenu').addEventListener('click', () => { st = null; updateChips(); renderMenuStars(); show('menu'); });
+  document.addEventListener('keydown', (e) => {
+    if ($('#play').hidden || !st) return;
+    if (/^[1-4]$/.test(e.key)) { const b = document.querySelectorAll('.opt')[+e.key - 1]; if (b && !b.disabled) b.click(); }
+  });
+
+  renderMenuStars(); updateChips();
+})();
+</script>
+
+</body>
+</html>
